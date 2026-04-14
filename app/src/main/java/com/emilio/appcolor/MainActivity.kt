@@ -1,11 +1,13 @@
 package com.emilio.appcolor
 
+import android.R
 import android.os.Bundle
 import android.service.quicksettings.Tile
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
@@ -21,6 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.room.Room
+import androidx.room.util.TableInfo
 import com.emilio.appcolor.ui.theme.AppColorTheme
 import androidx.compose.ui.graphics.Color as ComposeColor
 
@@ -157,8 +160,77 @@ fun ColorListScreen(viewModel: ColorViewModel, onAddClick: () -> Unit)
 
 }
 
+// Add color slider
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddColorScreen(onSave: (String, String) -> Unit, onCancel: () -> Unit)
 {
-    TODO("Not yet implemented")
+    // state varaibles for RGB slider and text input
+    var red by remember { mutableStateOf(0f) }
+    var green by remember { mutableStateOf(0f) }
+    var blue by remember { mutableStateOf(0f) }
+    var colorName by remember { mutableStateOf("") }
+
+    // Dynamically calculate the Hex string and compose color
+    val currentHex = String.format("#%02X%02X%02X", red.toInt(), green.toInt(), blue.toInt())
+    val previewColor = ComposeColor(red.toInt(), green.toInt(), blue.toInt())
+
+    Scaffold(
+        topBar =
+            {
+                TopAppBar(
+                 title = { Text("Add New Color") },
+                 colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+            )
+        }
+    ){
+       padding -> Column(
+           modifier = Modifier.padding(padding).fillMaxSize().padding(16.dp),
+           horizontalAlignment = Alignment.CenterHorizontally
+       )
+    {
+          // Live preview Box
+           Box(
+               modifier = Modifier.fillMaxWidth().height(150.dp).background(previewColor),
+               contentAlignment = Alignment.Center){
+               Text(text = currentHex, color =  ComposeColor.White, fontWeight = FontWeight.Bold)
+           }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+           // RGB Sliders
+        Text("R: ${red.toInt()}")
+        Slider(value =  red, onValueChange = {red = it}, valueRange = 0f..255f, colors = SliderDefaults.colors(thumbColor = ComposeColor.Red, activeTrackColor = ComposeColor.Red))
+
+        Text("G ${green.toInt()}")
+        Slider(value =  green, onValueChange = {green = it}, valueRange = 0f..255f, colors = SliderDefaults.colors(thumbColor = ComposeColor.Green, activeTrackColor = ComposeColor.Green))
+
+        Text("G ${blue.toInt()}")
+        Slider(value =  blue, onValueChange = {blue = it}, valueRange = 0f..255f, colors = SliderDefaults.colors(thumbColor = ComposeColor.Blue, activeTrackColor = ComposeColor.Blue))
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // Name Input
+        OutlinedTextField(
+            value = colorName,
+            onValueChange = {colorName = it},
+            label = { Text("Color Name (e.g Red)")},
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // Action Buttons
+        Button(
+            onClick = {onSave(currentHex, colorName)},
+            modifier = Modifier.fillMaxWidth(),
+            enabled = colorName.isNotBlank() // Prevent saving without a name
+        ) {
+            Text("Add Color")
+        }
+
+        TextButton(onClick = onCancel) {Text("Cancel") }
+       }
+    }
+
 }
