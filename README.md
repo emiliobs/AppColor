@@ -5,6 +5,7 @@ A modern, responsive Android application built with Kotlin and Jetpack Compose. 
 <table>
   <tr>
     <td><img src="https://github.com/user-attachments/assets/3e86e3f6-5df2-4ffa-9e9a-a67c4f534be2" alt="Color List Screen" width="300"/></td>
+    <br/>
     <td><img src="https://github.com/user-attachments/assets/91d2fc5f-cd28-4746-b790-562ac30ee480" alt="Add Color Screen" width="300"/></td>
   </tr>
 </table>
